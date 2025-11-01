@@ -1,14 +1,5 @@
 const API_URL = "https://api.themoviedb.org/3";
 
-interface Movie {
-  id: number;
-  title: string;
-  release_date?: string;
-  vote_average?: number;
-  poster_path?: string;
-  [key: string]: unknown;
-}
-
 export async function getActorId(name: string, apiKey: string) {
   const res = await fetch(
     `${API_URL}/search/person?api_key=${apiKey}&query=${encodeURIComponent(
@@ -16,10 +7,10 @@ export async function getActorId(name: string, apiKey: string) {
     )}`
   );
   const data = await res.json();
-  return data.results?.[0];
+  return data.results?.[0]?.id;
 }
 
-export async function getActorMovies(id: number, apiKey: string): Promise<Movie[]> {
+export async function getActorMovies(id: number, apiKey: string) {
   const res = await fetch(
     `${API_URL}/person/${id}/movie_credits?api_key=${apiKey}`
   );
@@ -27,8 +18,15 @@ export async function getActorMovies(id: number, apiKey: string): Promise<Movie[
   return data.cast || [];
 }
 
-export async function getSharedMovies(actor1: string, actor2: string, apiKey: string) {
-  const [id1, id2] = await Promise.all([getActorId(actor1, apiKey), getActorId(actor2, apiKey)]);
+export async function getSharedMovies(
+  actor1: string,
+  actor2: string,
+  apiKey: string
+) {
+  const [id1, id2] = await Promise.all([
+    getActorId(actor1, apiKey),
+    getActorId(actor2, apiKey),
+  ]);
   if (!id1 || !id2) throw new Error("Actor not found");
 
   const [movies1, movies2] = await Promise.all([
