@@ -37,3 +37,14 @@ export async function getSharedMovies(
   const shared = movies1.filter((m1) => movies2.some((m2) => m2.id === m1.id));
   return shared.sort((a, b) => (b.vote_average ?? 0) - (a.vote_average ?? 0));
 }
+
+export async function searchActors(query: string, apiKey: string) {
+  if (!query) return [];
+  const res = await fetch(
+    `https://api.themoviedb.org/3/search/person?api_key=${apiKey}&query=${encodeURIComponent(
+      query
+    )}`
+  );
+  const data = await res.json();
+  return data.results || [];
+}

@@ -1,18 +1,37 @@
-"use client"
+"use client";
 
-import { useSearchStore } from "../store/useSearchStore"
+import { useSearchStore } from "../store/useSearchStore";
+import ActorAutocomplete from "../components/ActorAutocomplete";
 
-export default function ActorSearchForm({onSearch} : {onSearch: () => void}) {
-    const {actor1, actor2, setActor1, setActor2} = useSearchStore()
+const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY!;
 
-    return (
-        <div className="flex flex-col gap-2 max-w-md mx-auto">
-            <input type="text" className="border rounder p-2" placeholder="First actors name" value={actor1} onChange={e => setActor1(e.target.value)} />
-            <input type="text" className="border rounder p-2" placeholder="Second actors name" value={actor2} onChange={e => setActor2(e.target.value)} />
+export default function ActorSearchForm({ onSearch }: { onSearch: () => void }) {
+  const { actor1, actor2, setActor1, setActor2 } = useSearchStore();
 
-            <button onClick={onSearch} className="bg-blue-600 text-white p-2 rounded">
-                Find Shared Movies
-            </button>
-        </div>
-    )
+  return (
+    <div className="flex flex-col gap-3 max-w-md mx-auto">
+      <ActorAutocomplete
+        value={actor1}
+        onChange={setActor1}
+        onSelect={setActor1}
+        placeholder="First actor"
+        apiKey={apiKey}
+      />
+
+      <ActorAutocomplete
+        value={actor2}
+        onChange={setActor2}
+        onSelect={setActor2}
+        placeholder="Second actor"
+        apiKey={apiKey}
+      />
+
+      <button
+        onClick={onSearch}
+        className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+      >
+        Find Shared Movies
+      </button>
+    </div>
+  );
 }
